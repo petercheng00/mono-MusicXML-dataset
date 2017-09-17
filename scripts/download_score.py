@@ -4,6 +4,8 @@ with the MuseScore Monophonic MusicXML dataset.
 
 Author: Eelco van der Wel
 Date: April 2017
+
+python3 download_score.py
 """
 
 import urllib.request
