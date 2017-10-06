@@ -19,7 +19,9 @@ def download_folder(folder_name):
     if not os.path.exists(folder_name):
         # os.makedirs(folder_name)
         os.makedirs(folder_name + '/midi')
-        os.makedirs(folder_name + '/musicxml')
+        os.makedirs(folder_name + '/musescore')
+        os.makedirs(folder_name + '/compressedmusicxml')
+        # os.makedirs(folder_name + '/musicxml')
 
     # Read train id's
     with open('../data/' + folder_name + '_keys.txt', 'r') as f:
@@ -37,15 +39,28 @@ def download_folder(folder_name):
             score_secret = score_json['secret']
 
             # Define save location
-            filename = './' + folder_name + '/musicxml/{}.mxl'.format(score_id)
+            filename = './' + folder_name + '/compressedmusicxml/{}.mxl'.format(score_id)
             # Download score
-            urllib.request.urlretrieve(score_file_url.format(score_id, score_secret),
+            urllib.request.urlretrieve(score_file_compressedxml_url.format(score_id, score_secret),
                                        filename)
             
             filename = './' + folder_name + '/midi/{}.mid'.format(score_id)
             # Download score
             urllib.request.urlretrieve(score_file_midi_url.format(score_id, score_secret),
                                        filename)
+
+            #you can use musescore <file> -o file.<ext>
+            filename = './' + folder_name + '/musescore/{}.mscz'.format(score_id)
+            # Download score
+            urllib.request.urlretrieve(score_file_musescore_url.format(score_id, score_secret),
+                                       filename)   
+
+            # seems it's not possible, it gives a  HTTP Error 403: Forbidden error            
+            # filename = './' + folder_name + '/musicxml/{}.xml'.format(score_id)
+            # # Download score
+            # urllib.request.urlretrieve(score_file_musicxml_url.format(score_id, score_secret),
+            #                            filename)   
+
         except:
             general_string += score_id + '\n'
 
@@ -67,12 +82,13 @@ if __name__ == "__main__":
     # - the score mxl file, using the public and secret id
     score_json_url = 'http://api.musescore.com/services/rest/score/{}.json?oauth_consumer_key='
     score_json_url += api_key
-    score_file_url = 'http://static.musescore.com/{}/{}/score.mxl'
     # http://developers.musescore.com/
     # {id}/{secret}/score.{extension} Where extension can be anything in pdf, mid (General MIDI), 
-    # mxl (Compressed MusicXML), mscz (MuseScore file), mp3.
+    # mxl (Compressed MusicXML), mscz (MuseScore file), mp3.    
+    score_file_compressedxml_url = 'http://static.musescore.com/{}/{}/score.mxl'
     score_file_midi_url = 'http://static.musescore.com/{}/{}/score.mid'
-
+    score_file_musescore_url = 'http://static.musescore.com/{}/{}/score.mscz'
+    # score_file_musicxml_url = 'http://static.musescore.com/{}/{}/score.xml'
 
     download_folder('train')
     download_folder('evaluation')
